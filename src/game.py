@@ -1,11 +1,32 @@
 import tkinter as tk
-
-
+from random import random
 import Bot
 
-game_board = [["","",""],
-              ["","",""],
-              ["","",""]]
+
+
+
+def check_win():
+    #rows
+    for row in game_board:
+        if row[0] == row[1] == row[2]:
+            return True, row[0]
+    #cols
+    for c in range(3):
+        start = game_board[0][c]
+        if start and all(game_board[r][c] == start for r in range(3)):
+            return True, start
+
+    #main diag
+    start = game_board[0][0]
+    if start and all(game_board[i][i] == start for i in range(3)):
+        return True, start
+
+    #anti-diag
+    start = game_board[0][2]
+    if start and all(game_board[i][2-i] == start for i in range(3)):
+        return True, start
+
+    return False, None
 
 
 
@@ -14,14 +35,8 @@ def handle_click(event):
     col = event.x // CELL
     print(row, ", ",col)
 
-
-def player_X():
-    button1.pack_forget()
-    button2.pack_forget()
-    button3.pack_forget()
-    title.pack_forget()
-    choice.pack_forget()
-    canvas.pack(anchor="center", pady = 100)
+def instantiate_board():
+    canvas.pack(anchor="center", pady=100)
     # Vertical lines
     canvas.create_line(CELL, 0, CELL, SIZE, width=2, fill="red")
     canvas.create_line(2 * CELL, 0, 2 * CELL, SIZE, width=2, fill="red")
@@ -31,8 +46,31 @@ def player_X():
     canvas.create_line(0, 2 * CELL, SIZE, 2 * CELL, width=2)
 
 
+def player_X():
+    button1.pack_forget()
+    button2.pack_forget()
+    button3.pack_forget()
+    title.pack_forget()
+    choice.pack_forget()
+    instantiate_board()
 
 
+def player_O():
+    button1.pack_forget()
+    button2.pack_forget()
+    button3.pack_forget()
+    title.pack_forget()
+    choice.pack_forget()
+    instantiate_board()
+
+def rand():
+    x = random()
+    if x < 0.5:
+        player_X()
+        print("X")
+    else:
+        player_O()
+        print("O")
 
 
 def display_rules():
@@ -55,6 +93,12 @@ def start_game():
 
 
 
+#game board as 2d string array
+game_board = [["","",""],
+              ["","",""],
+              ["","",""]]
+
+
 # Create the main window
 root = tk.Tk()
 root.title("Button Replacement Demo")
@@ -67,9 +111,9 @@ button_frame = tk.Frame(root)
 button_frame.place(relx=0.5, rely=0.5, anchor="center")
 button1 = tk.Button(button_frame, command = player_X, text="X", width=15, height = 5)
 button1.pack_forget()
-button2 = tk.Button(button_frame, text="Y", width=15, height = 5)
+button2 = tk.Button(button_frame, command = player_O, text="O", width=15, height = 5)
 button2.pack_forget()
-button3 = tk.Button(button_frame, text="Random", width=15, height = 5)
+button3 = tk.Button(button_frame, command = rand, text="Random", width=15, height = 5)
 button3.pack_forget()
 choice = tk.Label(root, text="Pick your Letter")
 choice.pack_forget()
